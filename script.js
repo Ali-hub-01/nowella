@@ -4,6 +4,21 @@
 
   var WA_NUMBER = "77058399888";
 
+  /* ---------- Google Ads конверсии (AW-18431495347) ---------- */
+  var CONV_FORM  = "AW-18431495347/MZvCCICY6-4cELOZ6dRE"; // Отправка формы для лидов
+  var CONV_WA    = "AW-18431495347/V0i_CPyL4e4cELOZ6dRE"; // Контакт (клик WhatsApp)
+  var CONV_PHONE = "AW-18431495347/V68nCJ-K6-4cELOZ6dRE"; // Интерактивные номера (клик по тел)
+  function fireConv(sendTo) {
+    if (typeof gtag === "function") gtag("event", "conversion", { send_to: sendTo, value: 1.0, currency: "USD" });
+  }
+  /* Делегированные клики по WhatsApp и телефону = конверсии */
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href*="wa.me"], a[href^="tel:"]');
+    if (!a) return;
+    if (a.getAttribute("href").indexOf("tel:") === 0) fireConv(CONV_PHONE);
+    else fireConv(CONV_WA);
+  });
+
   /* ---------- Header: состояние при скролле ---------- */
   var header = document.getElementById("header");
   function onScroll() {
@@ -98,7 +113,9 @@
     lines.push("Прошу рассчитать стоимость.");
 
     var url = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(lines.join("\n"));
-    window.open(url, "_blank", "noopener");
+    fireConv(CONV_FORM);
+    var win = window.open(url, "_blank");
+    if (!win) window.location.href = url;
 
     success.hidden = false;
     form.querySelector(".form__submit").disabled = true;
